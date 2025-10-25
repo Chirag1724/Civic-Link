@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utilities */
+.container { @apply max-w-5xl mx-auto p-6; }
+.card { @apply bg-white rounded-2xl p-6 shadow-lg; }
+.nav { @apply flex justify-between items-center p-3; }
+.btn { @apply bg-indigo-600 text-white px-4 py-2 rounded-lg inline-block; }
+.input, textarea { @apply w-full p-3 mt-2 rounded-lg border border-gray-200; }
+.badge { @apply inline-block px-3 py-1 rounded-full text-sm; }
