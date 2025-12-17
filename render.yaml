@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: civic-link-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build && echo '/* /index.html 200' > dist/_redirects
+    staticPublishPath: frontend/dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0

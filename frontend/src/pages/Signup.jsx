@@ -8,6 +8,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const nav = useNavigate();
 
   async function submit(e) {
@@ -17,9 +18,14 @@ export default function Signup() {
     
     try {
       await api.post('/auth/signup', form);
-      // Show success message and redirect
-      alert('Signup success. Login now.');
-      nav('/login');
+      
+      // Show success popup
+      setShowSuccess(true);
+      
+      // Navigate to login after animation
+      setTimeout(() => {
+        nav('/login');
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Signup failed. Please try again.');
     } finally {
@@ -29,6 +35,27 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4 py-12">
+      {/* Success Popup */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl p-10 shadow-2xl max-w-md mx-4 animate-slide-up border border-gray-100">
+            <div className="text-center">
+              {/* Animated Success Icon */}
+              <div className="relative inline-flex items-center justify-center mb-6">
+                <div className="absolute inset-0 bg-green-100 rounded-full animate-scale-pulse"></div>
+                <div className="relative bg-gradient-to-br from-green-500 to-green-600 rounded-full p-4 shadow-lg">
+                  <CheckCircle className="w-14 h-14 text-white animate-check-draw" strokeWidth={2.5} />
+                </div>
+              </div>
+              
+              {/* Success Text */}
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">Account Created!</h3>
+              <p className="text-gray-500 text-sm">Redirecting to login page...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         {/* Logo & Header */}
         <div className="text-center mb-8">
@@ -228,6 +255,66 @@ export default function Signup() {
           </button>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scale-pulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.3;
+          }
+          50% {
+            transform: scale(1.4);
+            opacity: 0;
+          }
+        }
+
+        @keyframes check-draw {
+          0% {
+            stroke-dashoffset: 100;
+            stroke-dasharray: 100;
+          }
+          100% {
+            stroke-dashoffset: 0;
+            stroke-dasharray: 100;
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.2s ease-out;
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .animate-scale-pulse {
+          animation: scale-pulse 1.5s ease-out infinite;
+        }
+
+        .animate-check-draw {
+          animation: check-draw 0.5s ease-out 0.2s backwards;
+        }
+      `}</style>
     </div>
   );
 }

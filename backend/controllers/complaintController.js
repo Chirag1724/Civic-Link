@@ -13,10 +13,14 @@ exports.createComplaint = async (req,res)=>{
   try{
     const { type, description, location, priority } = req.body;
     const citizenId = req.user.id;
+    console.log('Creating complaint for user:', citizenId); // YEH LINE ADD KARO
+    
     if(dupSet.has(type, location)) {
       return res.status(409).json({ error: 'Duplicate complaint detected' });
     }
     const complaint = await Complaint.create({ citizenId, type, description, location, priority });
+    console.log('Complaint created:', complaint); // YEH LINE BHI ADD KARO
+    
     dupSet.add(type, location);
     pq.push(complaint);
     statusQueue.enqueue(complaint._id.toString());
@@ -26,11 +30,28 @@ exports.createComplaint = async (req,res)=>{
   }
 };
 
+// GET /api/complaints - Get only logged-in user's complaints
 exports.getAllComplaints = async (req,res)=>{
   try{
-    const list = await Complaint.find().sort({ createdAt: -1 }).limit(100);
+    const citizenId = req.user.id;
+    const list = await Complaint.find({ citizenId }).sort({ createdAt: -1 }).limit(100);
     res.json({ list });
   }catch(err){
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/complaints/all - Get all users' complaints with user details
+exports.getAllComplaintsWithUsers = async (req,res)=>{
+  try{
+    const list = await Complaint.find()
+      .populate('citizenId', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean();
+    res.json({ list });
+  }catch(err){
+    console.error('Error fetching all complaints:', err);
     res.status(500).json({ error: err.message });
   }
 };
