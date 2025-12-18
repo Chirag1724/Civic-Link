@@ -31,7 +31,6 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Intersection Observer for counter animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -53,7 +52,6 @@ export default function LandingPage() {
     };
   }, [statsInView]);
 
-  // Animated counter effect with easing
   useEffect(() => {
     if (!statsInView) return;
 
@@ -80,7 +78,6 @@ export default function LandingPage() {
       requestAnimationFrame(updateCounter);
     };
 
-    // Animate 24/7 separately
     const animate247 = () => {
       const startTime = Date.now();
       const duration = 2000;
@@ -105,7 +102,6 @@ export default function LandingPage() {
       requestAnimationFrame(update);
     };
 
-    // Start animations with slight delays
     setTimeout(() => animateCounter('capacity', 10000, 2500), 100);
     setTimeout(() => animateCounter('resolution', 95, 2500), 200);
     setTimeout(() => animate247(), 250);
@@ -122,7 +118,6 @@ export default function LandingPage() {
     window.location.href = path;
   };
 
-  // Initialize chatbot with welcome message
   const openChatbot = () => {
     setShowChatbot(true);
     setIsMinimized(false);
@@ -130,7 +125,7 @@ export default function LandingPage() {
       setChatMessages([
         {
           role: 'assistant',
-          content: `👋 Hi there! Welcome to CivicLink!\n\nI'm your AI assistant. I can help you with:\n\n✨ Understanding how CivicLink works\n📝 Learning about complaint filing\n🎯 Exploring features\n💡 Getting started guide\n❓ Any questions about the platform\n\nHow can I help you today?`,
+          content: `👋 Namaste! Welcome to CivicLink!\n\nMain aapka AI assistant hoon. Main aapki madad kar sakta hoon:\n\n✨ CivicLink ke baare mein\n📝 Complaint kaise file karein\n🎯 Platform features\n💡 Getting started guide\n❓ Koi bhi sawal\n\nAap mujhse Hindi ya English mein baat kar sakte hain!`,
           timestamp: new Date()
         }
       ]);
@@ -145,97 +140,23 @@ export default function LandingPage() {
     setIsMinimized(!isMinimized);
   };
 
-  // Smart response system for landing page
+  // Comprehensive smart response system - NO BACKEND NEEDED!
   const getSmartResponse = (question) => {
     const q = question.toLowerCase();
     
-    // Greetings
-    if (q.match(/^(hi|hello|hey|hii|hiii|namaste)/)) {
-      return `Hello! 👋 Welcome to CivicLink - your digital solution for transparent governance!\n\nI'm here to help you understand how our platform works. What would you like to know?`;
+    if (q.match(/^(hi|hello|hey|hii|hiii|namaste|namaskar)/)) {
+      return `Namaste! 🙏 CivicLink mein aapka swagat hai!\n\nMain aapki kaise madad kar sakta hoon? Aap mujhse platform ke baare mein kuch bhi pooch sakte hain!`;
     }
     
-    // What is CivicLink
-    if (q.includes('what is') || q.includes('about') || q.includes('civiclink') || q.includes('platform')) {
-      return `**CivicLink** is a Digital Complaint Tracker System that:\n\n🎯 **Empowers Citizens**: File and track complaints easily\n🏛️ **Improves Governance**: Streamlines department workflows\n📊 **Ensures Transparency**: Real-time tracking and updates\n⚡ **Speeds Resolution**: Automated routing to right departments\n\nWe bridge the gap between citizens and civic authorities for better community service!`;
+    if (q.includes('what is') || q.includes('about') || q.includes('civiclink') || q.includes('platform') || q.includes('kya hai')) {
+      return `**CivicLink** ek Digital Complaint Tracker System hai:\n\n🎯 **Citizens**: Easily complaints file aur track karein\n🏛️ **Departments**: Workflows streamline karein\n📊 **Transparency**: Real-time updates\n⚡ **Fast**: Automatic routing\n\nHum citizens aur authorities ke beech bridge hain!`;
     }
     
-    // How it works
-    if (q.includes('how') && (q.includes('work') || q.includes('use') || q.includes('process'))) {
-      return `Here's how CivicLink works:\n\n**1️⃣ Submit Complaint**\n• Choose type (Water/Electricity/Road)\n• Add location and description\n• Set priority level\n\n**2️⃣ Track Progress**\n• Real-time status updates\n• Worker assignment notifications\n• Timeline view of progress\n\n**3️⃣ Get Resolution**\n• Department reviews and acts\n• Worker completes the task\n• You receive confirmation\n\nSimple, transparent, and efficient! 🚀`;
+    if (q.includes('how') && (q.includes('work') || q.includes('use') || q.includes('kaise'))) {
+      return `**Simple 3 Steps:**\n\n**1️⃣ Complaint Submit**\n• Type (Water/Electricity/Road)\n• Location add\n• Photo upload\n\n**2️⃣ Track Progress**\n• Real-time updates\n• Worker details\n• Timeline view\n\n**3️⃣ Get Resolution**\n• Department action\n• Worker resolves\n• Confirmation\n\nAasan, transparent, efficient! 🚀`;
     }
     
-    // Features
-    if (q.includes('feature') || q.includes('what can') || q.includes('capabilities')) {
-      return `CivicLink offers powerful features:\n\n**For Citizens:**\n✅ Easy complaint filing\n✅ Real-time tracking\n✅ Status notifications\n✅ Complaint history\n\n**For Departments:**\n📊 Analytics dashboard\n👥 Worker management\n📈 Performance metrics\n🔄 Automated routing\n\n**For Everyone:**\n🔒 Secure & encrypted\n🌐 24/7 availability\n📱 Mobile-friendly\n\nWant to know more about any specific feature?`;
-    }
-    
-    // Signup/Register
-    if (q.includes('sign up') || q.includes('register') || q.includes('create account') || q.includes('join') || q.includes('get started')) {
-      return `Getting started with CivicLink is easy!\n\n**Step 1**: Click the "Get Started" button at the top\n**Step 2**: Choose your role:\n• 👤 Citizen (File & track complaints)\n• 🏛️ Department (Manage complaints)\n• 👷 Worker (Resolve issues)\n\n**Step 3**: Fill in your details\n**Step 4**: Start using the platform!\n\nIt takes less than 2 minutes to sign up! Ready to begin? 🎯`;
-    }
-    
-    // Login
-    if (q.includes('login') || q.includes('sign in') || q.includes('log in')) {
-      return `Already have an account? Great!\n\n**To Login:**\n1. Click the "Login" button at the top\n2. Enter your email and password\n3. Access your dashboard instantly\n\n**Forgot Password?**\nUse the password recovery option on the login page.\n\nNeed help logging in? Let me know! 🔐`;
-    }
-    
-    // Complaint types
-    if (q.includes('type') || q.includes('category') || q.includes('kind') || q.includes('complaint')) {
-      return `We handle **3 main complaint types**:\n\n💧 **Water Issues**\n• Water leaks\n• Supply problems\n• Drainage issues\n• Water quality concerns\n\n⚡ **Electricity Problems**\n• Power outages\n• Faulty connections\n• Street light issues\n• Meter problems\n\n🚧 **Road Maintenance**\n• Potholes\n• Damaged roads\n• Construction debris\n• Traffic issues\n\nEach type is routed to the appropriate department automatically!`;
-    }
-    
-    // Status/Tracking
-    if (q.includes('status') || q.includes('track') || q.includes('progress') || q.includes('update')) {
-      return `Track your complaints with our **5-stage status system**:\n\n🟡 **Pending**: Complaint received, awaiting review\n🔵 **In Progress**: Worker assigned, actively resolving\n🔴 **Urgent**: High priority, immediate attention\n🟠 **Medium**: Important, scheduled resolution\n🟢 **Resolved**: Issue fixed successfully\n\nYou get notifications at every stage! Plus, view detailed timeline of all actions taken. 📊`;
-    }
-    
-    // Security/Privacy
-    if (q.includes('secure') || q.includes('safe') || q.includes('privacy') || q.includes('data') || q.includes('encrypt')) {
-      return `Your security is our priority! 🔒\n\n**Security Features:**\n✅ End-to-end encryption\n✅ Secure user authentication\n✅ Protected data storage\n✅ Privacy compliance\n✅ Regular security audits\n\n**Your Data:**\n• Only accessible to you and authorized departments\n• Never shared with third parties\n• Encrypted in transit and at rest\n\nYou can trust CivicLink with your information!`;
-    }
-    
-    // Pricing/Cost
-    if (q.includes('price') || q.includes('cost') || q.includes('free') || q.includes('paid') || q.includes('fee')) {
-      return `Great news! 🎉\n\n**CivicLink is FREE for:**\n✅ All citizens\n✅ Filing unlimited complaints\n✅ Real-time tracking\n✅ Status notifications\n\n**For Departments:**\nContact us for institutional pricing and custom features.\n\nOur mission is to make civic engagement accessible to everyone!`;
-    }
-    
-    // Mobile/App
-    if (q.includes('mobile') || q.includes('app') || q.includes('phone') || q.includes('android') || q.includes('ios')) {
-      return `CivicLink is fully mobile-responsive! 📱\n\n**Access from:**\n✅ Any web browser on your phone\n✅ Tablets and iPads\n✅ Desktop computers\n✅ Laptops\n\nNo app download needed! Just visit our website from any device and log in. The interface automatically adjusts for the best mobile experience.\n\nNative mobile apps coming soon! 🚀`;
-    }
-    
-    // Departments
-    if (q.includes('department') || q.includes('authority') || q.includes('government') || q.includes('who handles')) {
-      return `CivicLink connects you with relevant departments:\n\n🏛️ **Municipal Departments:**\n• Water Supply Department\n• Electricity Board\n• Public Works Department (Roads)\n\n**How it works:**\n1. You file a complaint\n2. System auto-routes to correct department\n3. Department assigns available worker\n4. Worker resolves the issue\n5. You get notified\n\nNo more running from office to office! 🎯`;
-    }
-    
-    // Time/Speed
-    if (q.includes('how long') || q.includes('time') || q.includes('fast') || q.includes('quick') || q.includes('speed')) {
-      return `Resolution times vary by priority:\n\n⚡ **High Priority**: 24-48 hours\n🟡 **Medium Priority**: 3-5 business days\n🟢 **Low Priority**: 5-7 business days\n\n**Target Goals:**\n• 95% resolution rate\n• 24/7 system availability\n• Instant complaint registration\n• Real-time status updates\n\nWe're committed to quick, efficient service! ⏱️`;
-    }
-    
-    // Contact/Support
-    if (q.includes('contact') || q.includes('support') || q.includes('help') || q.includes('email') || q.includes('phone')) {
-      return `Need additional support?\n\n📧 **Email**: support@civiclink.com\n📞 **Phone**: 1800-CIVIC-LINK\n⏰ **Hours**: 24/7 Support Available\n\n**Other Resources:**\n📚 Help Center (detailed guides)\n📖 Documentation (for departments)\n💬 Live chat (right here!)\n\nI'm always here to answer your questions! 😊`;
-    }
-    
-    // Benefits/Why use
-    if (q.includes('why') || q.includes('benefit') || q.includes('advantage') || q.includes('better')) {
-      return `Why choose CivicLink?\n\n**For Citizens:**\n✨ No more office visits\n✨ Track everything online\n✨ Transparent process\n✨ Quick resolutions\n✨ Historical records\n\n**For Government:**\n📊 Better accountability\n📈 Performance metrics\n🎯 Efficient resource allocation\n💰 Cost savings\n🤝 Improved citizen satisfaction\n\n**For Community:**\n🌟 Stronger trust in governance\n🏘️ Better maintained infrastructure\n🚀 Modern, digital approach\n\nEveryone wins with CivicLink! 🎉`;
-    }
-    
-    // Statistics
-    if (q.includes('stats') || q.includes('statistics') || q.includes('number') || q.includes('how many')) {
-      return `CivicLink by the numbers:\n\n🎯 **Target Capacity**: 10,000+ complaints\n✅ **Resolution Goal**: 95% success rate\n⏰ **Availability**: 24/7 system uptime\n🏛️ **Departments**: 3 major departments supported\n\n**Vision:**\nWe're building a platform that can serve entire cities efficiently!\n\nWant to be part of this transformation? Sign up today! 🚀`;
-    }
-    
-    // Demo/Trial
-    if (q.includes('demo') || q.includes('trial') || q.includes('test') || q.includes('try')) {
-      return `Want to see CivicLink in action?\n\n**Try it now:**\n1. Sign up for a free account\n2. Submit a test complaint\n3. Explore the dashboard\n4. Experience real-time tracking\n\nNo credit card required! No time limits!\n\n**For Departments:**\nContact us for a personalized demo and onboarding session.\n\nReady to get started? Click "Get Started" above! 🎯`;
-    }
-    
-    // Default helpful response
-    return `I'm here to help! I can tell you about:\n\n🔹 **Platform**: What CivicLink is and how it works\n🔹 **Features**: All the powerful capabilities\n🔹 **Getting Started**: How to sign up and use\n🔹 **Complaint Types**: Water, Electricity, Road issues\n🔹 **Tracking**: How to monitor your complaints\n🔹 **Security**: How we protect your data\n🔹 **Support**: How to get help\n\nWhat would you like to know more about? Just ask! 😊\n\nOr click "Get Started" to create your account now!`;
+    return `Main yahan hoon aapki help ke liye! 😊\n\nAap pooch sakte hain:\n\n🔹 CivicLink kya hai\n🔹 Features\n🔹 Complaint kaise file karein\n🔹 Tracking process\n🔹 Security\n🔹 Pricing\n\nKya jaanna chahte hain?`;
   };
 
   const sendChatMessage = async () => {
@@ -252,74 +173,7 @@ export default function LandingPage() {
     setChatInput('');
     setIsChatLoading(true);
 
-    try {
-      // We are using Claude API first
-      const systemPrompt = `You are a helpful AI assistant for CivicLink's landing page. CivicLink is a Digital Complaint Tracker System for transparent governance. 
-
-Your role is to:
-- Welcome visitors and explain what CivicLink is
-- Help them understand the platform features
-- Guide them through the signup process
-- Answer questions about complaint types (Water, Electricity, Road)
-- Explain how the tracking system works
-- Address security and privacy concerns
-- Be enthusiastic and encouraging about the platform
-
-Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourage visitors to sign up.`;
-
-      const conversationHistory = chatMessages
-        .filter(m => m.role !== 'system')
-        .map(m => ({
-          role: m.role,
-          content: m.content
-        }));
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "anthropic-version": "2023-06-01"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 800,
-          system: systemPrompt,
-          messages: [
-            ...conversationHistory,
-            { role: "user", content: currentInput }
-          ],
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.content && data.content.length > 0) {
-        const assistantText = data.content
-          .filter(block => block.type === 'text')
-          .map(block => block.text)
-          .join('\n');
-        
-        if (assistantText) {
-          const assistantMessage = {
-            role: 'assistant',
-            content: assistantText,
-            timestamp: new Date()
-          };
-          setChatMessages(prev => [...prev, assistantMessage]);
-        } else {
-          throw new Error('No text content');
-        }
-      } else {
-        throw new Error('Invalid response');
-      }
-    } catch (error) {
-      console.error('Chat error:', error);
-      
-      // Use smart fallback response
+    setTimeout(() => {
       const smartResponse = getSmartResponse(currentInput);
       
       const assistantMessage = {
@@ -327,10 +181,10 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         content: smartResponse,
         timestamp: new Date()
       };
+      
       setChatMessages(prev => [...prev, assistantMessage]);
-    } finally {
       setIsChatLoading(false);
-    }
+    }, 800);
   };
 
   const handleChatKeyPress = (e) => {
@@ -420,83 +274,79 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
     <>
       <style>{`
         @keyframes pulse-once {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
         }
         
         .animate-pulse-once {
           animation: pulse-once 0.6s ease-in-out;
         }
         
-        @keyframes countUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+
+        .backdrop-blur-custom {
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+
+        .chatbot-icon-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .chatbot-icon-shadow {
+          box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
         }
       `}</style>
       
       <div className="min-h-screen bg-gradient-to-b from-bg-primary to-bg-secondary">
-      {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-bg-secondary/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
-    <img 
-      src="/CivicLink_logo.png" 
-      alt="CivicLink Logo" 
-      className="w-full h-full object-contain"
-    />
-  </div>
+                <img src="/CivicLink_logo.png" alt="CivicLink Logo" className="w-full h-full object-contain" />
+              </div>
               <span className="text-2xl font-bold text-gray-900">CivicLink</span>
             </div>
 
-            {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-gray-700 hover:text-primary transition-colors font-medium">Features</a>
               <a href="#how-it-works" className="text-gray-700 hover:text-primary transition-colors font-medium">How It Works</a>
               <a href="#impact" className="text-gray-700 hover:text-primary transition-colors font-medium">Impact</a>
-              <button onClick={() => handleNavigation('/login')} className="text-gray-700 hover:text-primary transition-colors font-medium">
-                Login
-              </button>
-              <button onClick={() => handleNavigation('/signup')} className="px-6 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
-                Get Started
-              </button>
+              <button onClick={() => handleNavigation('/login')} className="text-gray-700 hover:text-primary transition-colors font-medium">Login</button>
+              <button onClick={() => handleNavigation('/signup')} className="px-6 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium">Get Started</button>
             </div>
 
-            {/* Mobile Menu Button */}
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg hover:bg-gray-100">
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden py-4 space-y-4 border-t border-bg-tertiary bg-bg-secondary/95 backdrop-blur-lg">
               <a href="#features" className="block py-2 text-gray-700 hover:text-primary font-medium">Features</a>
               <a href="#how-it-works" className="block py-2 text-gray-700 hover:text-primary font-medium">How It Works</a>
               <a href="#impact" className="block py-2 text-gray-700 hover:text-primary font-medium">Impact</a>
-              <button onClick={() => handleNavigation('/login')} className="block w-full text-left py-2 text-gray-700 hover:text-primary font-medium">
-                Login
-              </button>
-              <button onClick={() => handleNavigation('/signup')} className="block w-full px-6 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg text-center font-medium">
-                Get Started
-              </button>
+              <button onClick={() => handleNavigation('/login')} className="block w-full text-left py-2 text-gray-700 hover:text-primary font-medium">Login</button>
+              <button onClick={() => handleNavigation('/signup')} className="block w-full px-6 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg text-center font-medium">Get Started</button>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-semibold mb-6 animate-pulse">
@@ -524,7 +374,6 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </section>
 
-      {/* Stats Section */}
       <section ref={statsRef} className="py-16 px-4 sm:px-6 lg:px-8 bg-bg-secondary">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
@@ -537,15 +386,9 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
                 transitionDelay: `${index * 150}ms`
               }}
             >
-              <div className={`relative text-4xl md:text-5xl font-bold mb-2 transition-all duration-300 ${
-                statsInView ? 'animate-pulse-once' : ''
-              }`}>
-                <span className={`bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                  {stat.number}
-                </span>
-                {statsInView && (
-                  <div className="absolute inset-0 blur-xl opacity-30 bg-gradient-to-r from-primary to-accent-green animate-pulse"></div>
-                )}
+              <div className={`relative text-4xl md:text-5xl font-bold mb-2 transition-all duration-300 ${statsInView ? 'animate-pulse-once' : ''}`}>
+                <span className={`bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>{stat.number}</span>
+                {statsInView && <div className="absolute inset-0 blur-xl opacity-30 bg-gradient-to-r from-primary to-accent-green animate-pulse"></div>}
               </div>
               <div className="text-gray-600 font-medium text-sm md:text-base">{stat.label}</div>
             </div>
@@ -553,7 +396,6 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </section>
 
-      {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -575,7 +417,6 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-bg-secondary">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -595,18 +436,13 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
                   <p className="text-gray-600">{item.desc}</p>
                 </div>
-                {index < 2 && (
-                  <div className="hidden md:block">
-                    <ArrowRight className="w-8 h-8 text-primary" />
-                  </div>
-                )}
+                {index < 2 && <div className="hidden md:block"><ArrowRight className="w-8 h-8 text-primary" /></div>}
               </React.Fragment>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Status Overview Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -630,7 +466,6 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </section>
 
-      {/* CTA Section */}
       <section id="impact" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary to-primary-light">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Ready to Transform Governance?</h2>
@@ -642,18 +477,13 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
-    <img 
-      src="/CivicLink_logo.png" 
-      alt="CivicLink Logo" 
-      className="w-full h-full object-contain"
-    />
-  </div>
+                <img src="/CivicLink_logo.png" alt="CivicLink Logo" className="w-full h-full object-contain" />
+              </div>
               <span className="text-xl font-bold text-white">CivicLink</span>
             </div>
             <p className="text-sm">Empowering transparent governance through efficient complaint management.</p>
@@ -692,49 +522,65 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
         </div>
       </footer>
 
-      {/* AI Chatbot - Bottom Right Corner */}
+      {showChatbot && !isMinimized && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-custom z-[9998] animate-[fadeIn_0.3s_ease-in-out]"
+          onClick={closeChatbot}
+          style={{ animation: 'fadeIn 0.3s ease-in-out' }}
+        />
+      )}
+
       {!showChatbot && (
         <button
           onClick={openChatbot}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center z-50 group animate-bounce"
+          className="fixed bottom-6 right-6 w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full shadow-2xl chatbot-icon-shadow hover:shadow-3xl transition-all duration-300 flex items-center justify-center z-50 group chatbot-icon-float border-4 border-blue-100"
           aria-label="Open chat"
         >
-          <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"></span>
+          <img 
+            src="https://w7.pngwing.com/pngs/567/444/png-transparent-robotics-chatbot-technology-robot-education-electronics-computer-program-humanoid-robot.png"
+            alt="AI Assistant"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:scale-110 transition-transform duration-300"
+          />
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse border-2 border-white shadow-lg flex items-center justify-center">
+            <span className="w-2 h-2 bg-white rounded-full"></span>
+          </span>
         </button>
       )}
 
-      {/* AI Chatbot Window */}
       {showChatbot && (
-        <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${isMinimized ? 'w-80' : 'w-96'}`}>
-          <div className={`bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isMinimized ? 'h-16' : 'h-[600px]'}`}>
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white">
+        <div 
+          className={`fixed z-[9999] transition-all duration-300 animate-[slideUp_0.3s_ease-out]
+            ${isMinimized ? 'bottom-6 right-6 w-80' : 'bottom-6 right-6 w-[90vw] max-w-md sm:w-96'}
+          `}
+          style={{ animation: 'slideUp 0.3s ease-out' }}
+        >
+          <div className={`bg-white overflow-hidden flex flex-col shadow-2xl border-2 border-blue-100 ${isMinimized ? 'h-16 rounded-2xl' : 'h-[70vh] max-h-[600px] rounded-2xl'}`}>
+            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-4 text-white flex-shrink-0 border-b-4 border-blue-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Bot className="w-5 h-5" />
+                  <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-lg relative overflow-hidden">
+                    <img 
+                      src="https://w7.pngwing.com/pngs/567/444/png-transparent-robotics-chatbot-technology-robot-education-electronics-computer-program-humanoid-robot.png"
+                      alt="AI Assistant"
+                      className="w-9 h-9 object-contain"
+                    />
+                    <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></span>
                   </div>
                   {!isMinimized && (
                     <div>
-                      <h3 className="font-bold">CivicLink Assistant</h3>
-                      <p className="text-xs text-blue-100">Ask me anything!</p>
+                      <h3 className="font-bold text-base sm:text-lg flex items-center gap-2">
+                        CivicLink Assistant
+                        <span className="text-xs bg-green-400 text-green-900 px-2 py-0.5 rounded-full font-semibold">Online</span>
+                      </h3>
+                      <p className="text-xs text-blue-100">Aapki madad ke liye!</p>
                     </div>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={toggleMinimize}
-                    className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-                    aria-label={isMinimized ? "Maximize" : "Minimize"}
-                  >
+                  <button onClick={toggleMinimize} className="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
                     <Minimize2 className="w-4 h-4" />
                   </button>
-                  <button
-                    onClick={closeChatbot}
-                    className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-                    aria-label="Close chat"
-                  >
+                  <button onClick={closeChatbot} className="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Close chat">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -743,30 +589,24 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
 
             {!isMinimized && (
               <>
-                {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gradient-to-b from-gray-50 to-blue-50">
                   {chatMessages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[85%] rounded-2xl p-3 ${
-                          message.role === 'user'
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                            : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
-                        }`}
-                      >
+                    <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[85%] rounded-2xl p-3 shadow-md ${
+                        message.role === 'user'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                          : 'bg-white border-2 border-blue-100 text-gray-800'
+                      }`}>
                         {message.role === 'assistant' && (
-                          <div className="flex items-center gap-2 mb-2">
-                            <Bot className="w-3 h-3 text-blue-600" />
-                            <span className="text-xs font-semibold text-blue-600">AI Assistant</span>
+                          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-blue-100">
+                            <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                              <Bot className="w-3 h-3 text-white" />
+                            </div>
+                            <span className="text-xs font-bold text-blue-700">AI Assistant</span>
                           </div>
                         )}
                         <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
-                        <p className={`text-xs mt-2 ${
-                          message.role === 'user' ? 'text-blue-100' : 'text-gray-400'
-                        }`}>
+                        <p className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -775,10 +615,10 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
                   
                   {isChatLoading && (
                     <div className="flex justify-start">
-                      <div className="bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
+                      <div className="bg-white border-2 border-blue-100 rounded-2xl p-3 shadow-md">
                         <div className="flex items-center gap-2">
                           <Loader className="w-4 h-4 text-blue-600 animate-spin" />
-                          <span className="text-sm text-gray-600">Thinking...</span>
+                          <span className="text-sm text-gray-600 font-medium">Soch raha hoon...</span>
                         </div>
                       </div>
                     </div>
@@ -787,28 +627,28 @@ Keep responses concise, friendly, and helpful. Use emojis occasionally. Encourag
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Chat Input */}
-                <div className="p-3 bg-white border-t border-gray-200">
+                <div className="p-3 sm:p-4 bg-white border-t-2 border-blue-100 flex-shrink-0">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyPress={handleChatKeyPress}
-                      placeholder="Ask about CivicLink..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                      placeholder="CivicLink ke baare mein poochein..."
+                      className="flex-1 px-4 py-3 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition-all"
                       disabled={isChatLoading}
                     />
                     <button
                       onClick={sendChatMessage}
                       disabled={!chatInput.trim() || isChatLoading}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
                     >
                       <Send className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2 text-center">
-                    Powered by AI • Press Enter to send
+                  <p className="text-xs text-gray-500 mt-2 text-center flex items-center justify-center gap-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    CivicLink AI • Enter dabaayein
                   </p>
                 </div>
               </>

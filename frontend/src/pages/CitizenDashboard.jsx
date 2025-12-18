@@ -4,7 +4,7 @@ import { api } from '../api';
 import { 
   FileText, Droplet, Zap, Construction, MapPin, AlertCircle, Clock, CheckCircle, XCircle, 
   Filter, Plus, LogOut, User, TrendingUp, Search, Users, Eye, Phone, Mail, UserCheck,
-  Calendar, MessageSquare, ArrowRight, Package, Truck, CheckCircle2, X, Send, Bot, Loader
+  Calendar, MessageSquare, ArrowRight, Package, Truck, CheckCircle2, X, Send, Bot, Loader, Minimize2
 } from 'lucide-react';
 
 export default function CitizenDashboard() {
@@ -22,11 +22,12 @@ export default function CitizenDashboard() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   
-  // AI Support Chat States
+  // AI Support Chat States - Updated
   const [showSupportChat, setShowSupportChat] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const chatEndRef = useRef(null);
   
   const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -117,14 +118,15 @@ export default function CitizenDashboard() {
     nav('/login');
   };
 
-  // AI Support Chat Functions
+  // AI Support Chat Functions - Updated with better responses
   const openSupportChat = () => {
     setShowSupportChat(true);
+    setIsMinimized(false);
     if (chatMessages.length === 0) {
       setChatMessages([
         {
           role: 'assistant',
-          content: `Hello ${user?.name}! 👋 I'm your AI Support Assistant for CivicLink. I'm here to help you with:\n\n• Understanding complaint statuses\n• Tracking your complaints\n• Explaining the resolution process\n• General queries about the system\n\nHow can I assist you today?`,
+          content: `Namaste ${user?.name}! 👋\n\nMain aapka AI Support Assistant hoon. Main aapki madad kar sakta hoon:\n\n✨ Complaint status samajhne mein\n📊 Apne complaints track karne mein\n⏰ Resolution process ke baare mein\n❓ System ke kisi bhi sawal mein\n\n${myComplaints.length > 0 ? `Aapke paas currently **${myComplaints.length}** complaint${myComplaints.length !== 1 ? 's' : ''} hai:\n• Pending: ${myComplaints.filter(c => c.status === 'Pending').length}\n• In Progress: ${myComplaints.filter(c => c.status === 'In Progress').length}\n• Resolved: ${myComplaints.filter(c => c.status === 'Resolved').length}` : 'Aapne abhi tak koi complaint register nahi ki.'}\n\nKaise madad kar sakta hoon?`,
           timestamp: new Date()
         }
       ]);
@@ -135,92 +137,120 @@ export default function CitizenDashboard() {
     setShowSupportChat(false);
   };
 
-  // Smart fallback response system
+  const toggleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+  // Enhanced smart fallback response system - NO BACKEND NEEDED
   const getSmartResponse = (question) => {
     const q = question.toLowerCase();
     
     // Greetings
-    if (q.match(/^(hi|hello|hey|hii|hiii)/)) {
-      return `Hello ${user?.name}! 👋 How can I help you with your complaints today?`;
+    if (q.match(/^(hi|hello|hey|hii|hiii|namaste|namaskar)/)) {
+      return `Namaste ${user?.name}! 🙏\n\nMain yahan hoon aapki help ke liye. Aap apne complaints ke baare mein kuch bhi pooch sakte hain!\n\n${myComplaints.length > 0 ? `Aapke **${myComplaints.length}** complaint${myComplaints.length !== 1 ? 's' : ''} hain dashboard pe.` : ''}`;
     }
     
     // Status inquiries
-    if (q.includes('status') || q.includes('what is') || q.includes('explain')) {
+    if (q.includes('status') || q.includes('kya hai') || q.includes('explain') || q.includes('samjhao')) {
       if (selectedComplaint) {
         const status = selectedComplaint.status;
         if (status === 'Pending') {
-          return `Your ${selectedComplaint.type} complaint is currently **Pending**. This means:\n\n✅ Your complaint has been successfully registered\n⏳ It's waiting for department review\n👀 Our team will review it within 24 hours\n\nYou'll be notified once it moves to the next stage!`;
+          return `Aapki **${selectedComplaint.type}** complaint **Pending** status mein hai:\n\n✅ Complaint successfully register ho gayi\n⏳ Department review kar raha hai\n👀 24 hours ke andar action lega\n\nAapko notification milegi jab status change hoga!`;
         } else if (status === 'In Progress') {
-          return `Great news! Your ${selectedComplaint.type} complaint is **In Progress**. This means:\n\n✅ A worker has been assigned\n🔧 They're actively working on resolving the issue\n📍 Location: ${selectedComplaint.location}\n\nTypically, this takes 2-3 days depending on the complexity. You can track real-time progress in the timeline above!`;
+          return `Bahut acchi khabar! Aapki **${selectedComplaint.type}** complaint **In Progress** hai:\n\n✅ Worker assign ho gaya hai\n🔧 Issue resolve ho raha hai\n📍 Location: ${selectedComplaint.location}\n\n${selectedComplaint.assignedTo ? `Assigned Worker: **${selectedComplaint.assignedTo}**\n\n` : ''}Usually 2-3 din lagta hai. Timeline mein real-time progress dekh sakte hain!`;
         } else if (status === 'Resolved') {
-          return `Excellent! Your ${selectedComplaint.type} complaint has been **Resolved**! 🎉\n\n✅ The issue has been fixed\n✅ Worker completed the task\n${selectedComplaint.resolvedAt ? `✅ Resolved on: ${new Date(selectedComplaint.resolvedAt).toLocaleString()}` : ''}\n\nThank you for using CivicLink to make our community better!`;
+          return `Excellent! Aapki **${selectedComplaint.type}** complaint **Resolved** ho gayi! 🎉\n\n✅ Issue fix ho gaya\n✅ Worker ne kaam complete kiya\n${selectedComplaint.resolvedAt ? `✅ Resolved Date: ${new Date(selectedComplaint.resolvedAt).toLocaleString()}` : ''}\n\nCivicLink use karne ke liye shukriya!`;
         } else if (status === 'Rejected') {
-          return `I see your ${selectedComplaint.type} complaint was **Rejected**. This could be due to:\n\n• Insufficient information provided\n• Issue doesn't fall under our jurisdiction\n• Duplicate complaint\n\nYou can register a new complaint with more details or contact support for clarification.`;
+          return `Aapki **${selectedComplaint.type}** complaint **Rejected** ho gayi. Possible reasons:\n\n• Information incomplete thi\n• Hamari jurisdiction mein nahi aata\n• Duplicate complaint\n\nAap zyada details ke saath naya complaint register kar sakte hain!`;
         }
       }
-      return `Let me explain our complaint statuses:\n\n🟡 **Pending**: Complaint received, waiting for review\n🔵 **In Progress**: Worker assigned, actively resolving\n🟢 **Resolved**: Issue fixed successfully\n🔴 **Rejected**: Could not be processed\n\nYou can track your complaint's journey in the timeline view!`;
+      return `Complaint statuses:\n\n🟡 **Pending**: Complaint receive ho gayi, review pending\n🔵 **In Progress**: Worker assign, actively resolving\n🟢 **Resolved**: Issue successfully fix ho gaya\n🔴 **Rejected**: Process nahi ho saka\n\n${myComplaints.length > 0 ? `\nAapke complaints:\n• Total: ${myComplaints.length}\n• Pending: ${myComplaints.filter(c => c.status === 'Pending').length}\n• In Progress: ${myComplaints.filter(c => c.status === 'In Progress').length}\n• Resolved: ${myComplaints.filter(c => c.status === 'Resolved').length}` : ''}`;
     }
     
     // Worker inquiries
-    if (q.includes('worker') || q.includes('assigned') || q.includes('who')) {
+    if (q.includes('worker') || q.includes('assigned') || q.includes('kaun') || q.includes('who')) {
       if (selectedComplaint && selectedComplaint.assignedTo) {
-        return `Your complaint has been assigned to: **${selectedComplaint.assignedTo}**\n\n👷 Department: ${selectedComplaint.type}\n📍 Zone: ${selectedComplaint.assignedWorkers?.[0]?.location || 'Not specified'}\n\nThe worker is actively working on resolving your issue. You can see more details in the "Assigned Worker" card on the right!`;
+        return `Aapki complaint assign hui hai:\n\n👷 **${selectedComplaint.assignedTo}**\n📋 Department: ${selectedComplaint.type}\n📍 Zone: ${selectedComplaint.assignedWorkers?.[0]?.location || 'Not specified'}\n\nWorker actively kaam kar raha hai. Details "Assigned Worker" card mein dekh sakte hain!`;
       } else if (selectedComplaint) {
-        return `A worker hasn't been assigned to your complaint yet. Here's what's happening:\n\n⏳ Your complaint is being reviewed\n👀 Our system is finding the best worker for your area\n⚡ Assignment typically happens within 24-48 hours\n\nYou'll be notified immediately once a worker is assigned!`;
+        return `Abhi tak worker assign nahi hua:\n\n⏳ Complaint review ho raha hai\n👀 Best worker dhund rahe hain\n⚡ 24-48 hours mein assign hoga\n\nNotification milegi jab worker assign hoga!`;
       }
-      return `Workers are assigned based on:\n\n📍 Your location\n⚡ Complaint priority\n🔧 Worker availability and expertise\n\nOnce assigned, you'll see their details including name, department, and zone in the complaint tracking view!`;
+      return `Workers assign hote hain based on:\n\n📍 Aapka location\n⚡ Complaint priority\n🔧 Worker availability\n\n${myComplaints.length > 0 ? `Aapke ${myComplaints.filter(c => c.assignedTo).length} complaints mein workers assign ho chuke hain.` : ''}`;
     }
     
     // Time/Duration inquiries
-    if (q.includes('how long') || q.includes('when') || q.includes('time') || q.includes('duration')) {
+    if (q.includes('kitna time') || q.includes('how long') || q.includes('when') || q.includes('kab') || q.includes('duration')) {
       const priority = selectedComplaint?.priority;
-      let timeframe = '3-5 business days';
-      if (priority === 'High') timeframe = '24-48 hours';
-      else if (priority === 'Low') timeframe = '5-7 business days';
+      let timeframe = '3-5 din';
+      let timeframeEng = '3-5 business days';
+      if (priority === 'High') {
+        timeframe = '24-48 ghante';
+        timeframeEng = '24-48 hours';
+      } else if (priority === 'Low') {
+        timeframe = '5-7 din';
+        timeframeEng = '5-7 business days';
+      }
       
-      return `Resolution time depends on priority level:\n\n🔴 **High Priority**: 24-48 hours\n🟡 **Medium Priority**: 3-5 business days\n🟢 **Low Priority**: 5-7 business days\n\n${selectedComplaint ? `Your complaint is **${priority} Priority**, so expect resolution within **${timeframe}**.` : ''}\n\nComplex issues may take longer, but you can track progress in real-time!`;
+      return `Resolution time priority par depend karta hai:\n\n🔴 **High Priority**: 24-48 ghante\n🟡 **Medium Priority**: 3-5 din\n🟢 **Low Priority**: 5-7 din\n\n${selectedComplaint ? `Aapki complaint **${priority} Priority** hai, toh **${timeframe}** mein resolve hogi.` : ''}\n\nComplex issues mein time zyada lag sakta hai. Real-time progress track kar sakte hain!`;
     }
     
-    // Location/Area inquiries
-    if (q.includes('location') || q.includes('area') || q.includes('where')) {
+    // Location inquiries
+    if (q.includes('location') || q.includes('area') || q.includes('kaha') || q.includes('where') || q.includes('jagah')) {
       if (selectedComplaint) {
-        return `Your complaint location:\n\n📍 **${selectedComplaint.location}**\n\nThis helps us assign the nearest available worker to resolve your issue quickly. Make sure the location details are accurate for faster service!`;
+        return `Aapki complaint ka location:\n\n📍 **${selectedComplaint.location}**\n\nYeh location help karta hai nearest worker assign karne mein. Accurate location se faster service milti hai!`;
       }
-      return `Location is important for:\n\n✅ Assigning nearby workers\n✅ Faster response times\n✅ Accurate service delivery\n\nAlways provide complete address details when registering a complaint!`;
+      return `Location important hai kyunki:\n\n✅ Nearby workers assign hote hain\n✅ Fast response milta hai\n✅ Accurate service delivery\n\nComplaint register karte waqt complete address dena zaroori hai!`;
     }
     
     // Priority inquiries
-    if (q.includes('priority') || q.includes('urgent') || q.includes('important')) {
-      return `Complaint priorities:\n\n🔴 **High**: Urgent issues (water leaks, power outages, major road damage)\n🟡 **Medium**: Important but not critical issues\n🟢 **Low**: Minor issues that can wait\n\n${selectedComplaint ? `Your complaint is marked as **${selectedComplaint.priority} Priority**.` : ''}\n\nPriority affects resolution time and worker assignment!`;
+    if (q.includes('priority') || q.includes('urgent') || q.includes('important') || q.includes('zaruri')) {
+      return `Complaint priorities:\n\n🔴 **High**: Urgent issues (water leak, bijli ka issue, major road damage)\n🟡 **Medium**: Important lekin critical nahi\n🟢 **Low**: Minor issues jo wait kar sakte hain\n\n${selectedComplaint ? `Aapki complaint **${selectedComplaint.priority} Priority** hai.` : ''}\n\n${myComplaints.length > 0 ? `\nAapke complaints:\n• High: ${myComplaints.filter(c => c.priority === 'High').length}\n• Medium: ${myComplaints.filter(c => c.priority === 'Medium').length}\n• Low: ${myComplaints.filter(c => c.priority === 'Low').length}` : ''}\n\nPriority resolution time aur worker assignment ko affect karta hai!`;
     }
     
     // Types of complaints
-    if (q.includes('type') || q.includes('category') || q.includes('kind')) {
-      return `We handle three types of complaints:\n\n💧 **Water**: Leaks, supply issues, drainage problems\n⚡ **Electricity**: Power outages, faulty connections, street lights\n🚧 **Road**: Potholes, damaged roads, construction issues\n\n${selectedComplaint ? `You're viewing a **${selectedComplaint.type}** complaint.` : ''}\n\nChoose the right category for faster resolution!`;
+    if (q.includes('type') || q.includes('category') || q.includes('prakar') || q.includes('kisme')) {
+      return `Teen types ke complaints handle karte hain:\n\n💧 **Water (Paani)**: Leakage, supply issues, drainage\n⚡ **Electricity (Bijli)**: Power cuts, faulty connections, street lights\n🚧 **Road (Sadak)**: Potholes, damaged roads, construction\n\n${selectedComplaint ? `Aap **${selectedComplaint.type}** complaint dekh rahe hain.` : ''}\n\n${myComplaints.length > 0 ? `\nAapke complaints:\n• Water: ${myComplaints.filter(c => c.type === 'Water').length}\n• Electricity: ${myComplaints.filter(c => c.type === 'Electricity').length}\n• Road: ${myComplaints.filter(c => c.type === 'Road').length}` : ''}\n\nSahi category choose karne se faster resolution milta hai!`;
     }
     
     // How to register
-    if (q.includes('register') || q.includes('submit') || q.includes('create') || q.includes('file') || q.includes('new complaint')) {
-      return `To register a new complaint:\n\n1️⃣ Click "Register New Complaint" button\n2️⃣ Select complaint type (Water/Electricity/Road)\n3️⃣ Choose priority level\n4️⃣ Enter location details\n5️⃣ Describe the issue\n6️⃣ Submit!\n\nYou'll get immediate confirmation and can track progress in real-time. Easy! 🎯`;
+    if (q.includes('register') || q.includes('submit') || q.includes('create') || q.includes('file') || q.includes('new') || q.includes('kaise') || q.includes('banaye')) {
+      return `Naya complaint register karne ke liye:\n\n1️⃣ "Register New Complaint" button click karein\n2️⃣ Type select karein (Water/Electricity/Road)\n3️⃣ Priority level choose karein (High/Medium/Low)\n4️⃣ Location details enter karein\n5️⃣ Issue describe karein\n6️⃣ Submit karein!\n\n✅ Turant confirmation milega\n✅ Real-time progress track kar sakte hain\n✅ Notifications har stage pe milenge\n\nBilkul aasan! 🎯`;
     }
     
     // Tracking inquiries
-    if (q.includes('track') || q.includes('progress') || q.includes('check') || q.includes('update')) {
-      return `Track your complaints easily:\n\n📊 **My Complaints Tab**: See all your complaints\n🔍 **Track Button**: View detailed timeline\n📈 **Progress Timeline**: See each step of resolution\n🔔 **Status Updates**: Get notified of changes\n\nYou currently have ${myComplaints.length} complaint${myComplaints.length !== 1 ? 's' : ''} registered. ${myComplaints.filter(c => c.status === 'Pending').length} pending, ${myComplaints.filter(c => c.status === 'In Progress').length} in progress!`;
+    if (q.includes('track') || q.includes('progress') || q.includes('check') || q.includes('dekhe') || q.includes('update')) {
+      return `Complaints track karne ke liye:\n\n📊 **My Complaints Tab**: Apne saare complaints dekhein\n🔍 **Track Button**: Detailed timeline dekhein\n📈 **Progress Timeline**: Har step ka status\n🔔 **Notifications**: Status change pe alert\n\n${myComplaints.length > 0 ? `Aapke **${myComplaints.length}** complaint${myComplaints.length !== 1 ? 's' : ''} hain:\n• Pending: ${myComplaints.filter(c => c.status === 'Pending').length}\n• In Progress: ${myComplaints.filter(c => c.status === 'In Progress').length}\n• Resolved: ${myComplaints.filter(c => c.status === 'Resolved').length}` : 'Abhi tak koi complaint register nahi ki.'}\n\nDashboard pe real-time updates milte rahenge!`;
     }
     
     // Contact/Help
-    if (q.includes('contact') || q.includes('help') || q.includes('support') || q.includes('phone') || q.includes('email')) {
-      return `Need more help?\n\n📧 Email: support@civiclink.com\n📞 Phone: 1800-CIVIC-LINK\n⏰ Hours: 24/7 Support\n\n${selectedComplaint ? `For your current complaint (ID: ${selectedComplaint._id?.slice(-8)}), you can also wait for the assigned worker to contact you directly!` : ''}\n\nI'm here to answer questions anytime! 😊`;
+    if (q.includes('contact') || q.includes('help') || q.includes('support') || q.includes('phone') || q.includes('email') || q.includes('sampark')) {
+      return `Additional help chahiye?\n\n📧 **Email**: support@civiclink.com\n📞 **Phone**: 1800-CIVIC-LINK\n⏰ **Hours**: 24/7 Support\n\n${selectedComplaint && selectedComplaint.assignedTo ? `Aapki current complaint (ID: ${selectedComplaint._id?.slice(-8)}) ke liye assigned worker bhi aapse contact kar sakta hai!` : ''}\n\nMain hamesha yahan hoon questions answer karne ke liye! 😊`;
     }
     
     // Stats/Numbers
-    if (q.includes('how many') || q.includes('total') || q.includes('count') || q.includes('statistics')) {
-      return `Your complaint statistics:\n\n📊 **Total Complaints**: ${myComplaints.length}\n⏳ **Pending**: ${myComplaints.filter(c => c.status === 'Pending').length}\n🔄 **In Progress**: ${myComplaints.filter(c => c.status === 'In Progress').length}\n✅ **Resolved**: ${myComplaints.filter(c => c.status === 'Resolved').length}\n\nYou're making a difference in your community! 🌟`;
+    if (q.includes('kitne') || q.includes('how many') || q.includes('total') || q.includes('count') || q.includes('statistics')) {
+      return `Aapke complaint statistics:\n\n📊 **Total Complaints**: ${myComplaints.length}\n⏳ **Pending**: ${myComplaints.filter(c => c.status === 'Pending').length}\n🔄 **In Progress**: ${myComplaints.filter(c => c.status === 'In Progress').length}\n✅ **Resolved**: ${myComplaints.filter(c => c.status === 'Resolved').length}\n${myComplaints.filter(c => c.status === 'Rejected').length > 0 ? `\n🔴 **Rejected**: ${myComplaints.filter(c => c.status === 'Rejected').length}` : ''}\n\n${myComplaints.length > 0 ? `\n**Type-wise:**\n💧 Water: ${myComplaints.filter(c => c.type === 'Water').length}\n⚡ Electricity: ${myComplaints.filter(c => c.type === 'Electricity').length}\n🚧 Road: ${myComplaints.filter(c => c.type === 'Road').length}` : ''}\n\nAap apni community mein difference la rahe hain! 🌟`;
+    }
+    
+    // Complaint detail inquiry
+    if (q.includes('detail') || q.includes('info') || q.includes('information') || q.includes('jankari')) {
+      if (selectedComplaint) {
+        return `Current complaint ki details:\n\n📋 **Type**: ${selectedComplaint.type}\n📍 **Location**: ${selectedComplaint.location}\n⚡ **Priority**: ${selectedComplaint.priority}\n📊 **Status**: ${selectedComplaint.status}\n📅 **Date**: ${selectedComplaint.createdAt ? new Date(selectedComplaint.createdAt).toLocaleDateString() : 'N/A'}\n${selectedComplaint.assignedTo ? `\n👷 **Worker**: ${selectedComplaint.assignedTo}` : ''}\n${selectedComplaint.description ? `\n📝 **Description**: ${selectedComplaint.description.slice(0, 100)}${selectedComplaint.description.length > 100 ? '...' : ''}` : ''}\n\n"Track" button click karke complete timeline dekh sakte hain!`;
+      }
+      return `Complaint details dekhne ke liye:\n\n1️⃣ "My Complaints" tab open karein\n2️⃣ Complaint pe "Track" button click karein\n3️⃣ Complete timeline aur details dekhein\n\n${myComplaints.length > 0 ? `Aapke paas ${myComplaints.length} complaint${myComplaints.length !== 1 ? 's' : ''} hai jo aap track kar sakte hain!` : 'Pehle ek complaint register karein!'}`;
+    }
+    
+    // Dashboard features
+    if (q.includes('dashboard') || q.includes('feature') || q.includes('kya kar sakte')) {
+      return `Dashboard pe aap yeh kar sakte hain:\n\n✨ **Register Complaints**: Naye complaints submit karein\n📊 **Track Progress**: Real-time status updates\n👀 **View All**: Apne saare complaints dekhein\n🔍 **Search & Filter**: Status aur type se filter karein\n📈 **View Stats**: Quick overview of your complaints\n💬 **AI Support**: Mujhse kuch bhi poochein!\n\n**My Complaints Tab**: Sirf aapke complaints\n**All Complaints Tab**: Sabke complaints dekh sakte hain\n\nKya aur kuch jaanna hai? 😊`;
+    }
+    
+    // Thank you / appreciation
+    if (q.includes('thank') || q.includes('thanks') || q.includes('shukriya') || q.includes('dhanyavaad')) {
+      return `Aapka swagat hai ${user?.name}! 🙏\n\nMain yahan hoon aapki help ke liye. Koi bhi sawal ho toh poochiye!\n\n${myComplaints.length > 0 ? `Aapne ${myComplaints.filter(c => c.status === 'Resolved').length > 0 ? `already ${myComplaints.filter(c => c.status === 'Resolved').length} complaint${myComplaints.filter(c => c.status === 'Resolved').length !== 1 ? 's' : ''} resolve karwaya hai - ` : ''}CivicLink use karne ke liye aapka shukriya! 🌟` : ''}`;
     }
     
     // Default helpful response
-    return `I'm here to help! I can answer questions about:\n\n✨ Complaint statuses and progress\n👷 Worker assignments\n⏰ Resolution timeframes\n📝 How to register complaints\n📊 Tracking your complaints\n\n${selectedComplaint ? `You're currently viewing your **${selectedComplaint.type}** complaint (Status: **${selectedComplaint.status}**).` : `You have **${myComplaints.length}** total complaint${myComplaints.length !== 1 ? 's' : ''}.`}\n\nWhat would you like to know? 😊`;
+    return `Main yahan hoon aapki madad ke liye! 😊\n\nAap pooch sakte hain:\n\n✨ **Status**: Complaint ka current status\n👷 **Workers**: Kaun assigned hai\n⏰ **Time**: Kitna time lagega\n📝 **Register**: Naya complaint kaise register karein\n📊 **Track**: Complaints kaise track karein\n🔍 **Details**: Kisi bhi complaint ki details\n\n${selectedComplaint ? `Aap currently **${selectedComplaint.type}** complaint dekh rahe hain (Status: **${selectedComplaint.status}**).` : `Aapke **${myComplaints.length}** total complaint${myComplaints.length !== 1 ? 's' : ''} hain.`}\n\nKya jaanna chahte hain? Poochiye! 🎯`;
   };
 
   const sendChatMessage = async () => {
@@ -237,74 +267,8 @@ export default function CitizenDashboard() {
     setChatInput('');
     setIsChatLoading(true);
 
-    try {
-      // Prepare context about user's complaints
-      const complaintContext = selectedComplaint 
-        ? `Current complaint being viewed: Type: ${selectedComplaint.type}, Status: ${selectedComplaint.status}, Location: ${selectedComplaint.location}, Priority: ${selectedComplaint.priority}, Description: ${selectedComplaint.description}`
-        : `User has ${myComplaints.length} total complaints. ${myComplaints.filter(c => c.status === 'Pending').length} pending, ${myComplaints.filter(c => c.status === 'In Progress').length} in progress, ${myComplaints.filter(c => c.status === 'Resolved').length} resolved.`;
-
-      const systemPrompt = `You are a helpful AI assistant for CivicLink, a civic complaint management system. You help citizens with their queries about complaints related to Water, Electricity, and Road issues.
-
-Current context:
-- User name: ${user?.name}
-- ${complaintContext}
-
-Be friendly, concise, and helpful. Provide clear answers about complaint statuses, processes, and timelines. If asked about specific complaint details, reference the context provided. Keep responses professional but warm. Use emojis occasionally to be friendly.`;
-
-      // Build conversation history properly
-      const conversationHistory = chatMessages
-        .filter(m => m.role !== 'system' && !m.isError)
-        .map(m => ({
-          role: m.role,
-          content: m.content
-        }));
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "anthropic-version": "2023-06-01"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [
-            ...conversationHistory,
-            { role: "user", content: currentInput }
-          ],
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.content && data.content.length > 0) {
-        const assistantText = data.content
-          .filter(block => block.type === 'text')
-          .map(block => block.text)
-          .join('\n');
-        
-        if (assistantText) {
-          const assistantMessage = {
-            role: 'assistant',
-            content: assistantText,
-            timestamp: new Date()
-          };
-          setChatMessages(prev => [...prev, assistantMessage]);
-        } else {
-          throw new Error('No text content in response');
-        }
-      } else {
-        throw new Error('Invalid response structure from AI');
-      }
-    } catch (error) {
-      console.error('Chat error:', error);
-      
-      // Use smart fallback response
+    // Simulate thinking delay for better UX
+    setTimeout(() => {
       const smartResponse = getSmartResponse(currentInput);
       
       const assistantMessage = {
@@ -312,10 +276,10 @@ Be friendly, concise, and helpful. Provide clear answers about complaint statuse
         content: smartResponse,
         timestamp: new Date()
       };
+      
       setChatMessages(prev => [...prev, assistantMessage]);
-    } finally {
       setIsChatLoading(false);
-    }
+    }, 800);
   };
 
   const handleChatKeyPress = (e) => {
@@ -482,6 +446,36 @@ Be friendly, concise, and helpful. Provide clear answers about complaint statuse
 
   return (
     <div className="min-h-screen bg-bg-primary">
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        .chatbot-icon-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .chatbot-icon-shadow {
+          box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .backdrop-blur-custom {
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+      `}</style>
+
       {/* Top Navigation */}
       <nav className="bg-bg-secondary border-b border-bg-tertiary shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1018,14 +1012,14 @@ Be friendly, concise, and helpful. Provide clear answers about complaint statuse
                       AI Support Assistant
                     </h4>
                     <p className="text-xs text-gray-600 mb-3">
-                      Have questions about your complaint? Chat with our AI assistant for instant help.
+                      Questions about this complaint? Chat with our AI assistant for instant help.
                     </p>
                     <button 
                       onClick={openSupportChat}
                       className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      Chat with AI Support
+                      Chat Now
                     </button>
                   </div>
                 </div>
@@ -1046,102 +1040,165 @@ Be friendly, concise, and helpful. Provide clear answers about complaint statuse
       </div>
       )}
 
-      {/* AI Support Chat Window */}
+      {/* Backdrop Overlay when chatbot is open - MOBILE ONLY */}
+      {showSupportChat && !isMinimized && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-custom z-[9998] animate-[fadeIn_0.3s_ease-in-out]"
+          onClick={closeSupportChat}
+          style={{ animation: 'fadeIn 0.3s ease-in-out' }}
+        />
+      )}
+
+      {/* Floating AI Chatbot Button - Landing Page Style - Mobile Responsive */}
+      {!showSupportChat && (
+        <button
+          onClick={openSupportChat}
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white rounded-full shadow-2xl chatbot-icon-shadow hover:shadow-3xl transition-all duration-300 flex items-center justify-center z-50 group chatbot-icon-float border-4 border-blue-100"
+          aria-label="Open AI Support"
+        >
+          <img 
+            src="https://w7.pngwing.com/pngs/567/444/png-transparent-robotics-chatbot-technology-robot-education-electronics-computer-program-humanoid-robot.png"
+            alt="AI Support"
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain group-hover:scale-110 transition-transform duration-300"
+          />
+          <span className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 w-4 h-4 md:w-5 md:h-5 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse border-2 border-white shadow-lg flex items-center justify-center">
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></span>
+          </span>
+        </button>
+      )}
+
+      {/* AI Support Chat Window - Landing Page Style - Mobile Responsive */}
       {showSupportChat && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[600px] flex flex-col overflow-hidden">
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+        <div 
+          className={`fixed z-[9999] transition-all duration-300 animate-[slideUp_0.3s_ease-out]
+            ${isMinimized 
+              ? 'bottom-4 right-4 md:bottom-6 md:right-6 w-72 sm:w-80' 
+              : 'inset-x-0 bottom-0 md:bottom-6 md:right-6 md:left-auto md:inset-x-auto w-full md:w-96'
+            }
+          `}
+          style={{ animation: 'slideUp 0.3s ease-out' }}
+        >
+          <div className={`bg-white overflow-hidden flex flex-col shadow-2xl ${
+            isMinimized 
+              ? 'h-14 md:h-16 rounded-2xl border-2 border-blue-100' 
+              : 'h-[100dvh] md:h-[70vh] md:max-h-[600px] md:rounded-2xl md:border-2 md:border-blue-100'
+          }`}>
+            {/* Chat Header - Professional Design */}
+            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-3 md:p-4 text-white flex-shrink-0 border-b-4 border-blue-800">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Bot className="w-6 h-6" />
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="w-9 h-9 md:w-11 md:h-11 bg-white rounded-full flex items-center justify-center shadow-lg relative overflow-hidden">
+                    <img 
+                      src="https://w7.pngwing.com/pngs/567/444/png-transparent-robotics-chatbot-technology-robot-education-electronics-computer-program-humanoid-robot.png"
+                      alt="AI Assistant"
+                      className="w-7 h-7 md:w-9 md:h-9 object-contain"
+                    />
+                    <span className="absolute -bottom-0.5 -right-0.5 md:-bottom-1 md:-right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-green-400 rounded-full border-2 border-white"></span>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold">AI Support Assistant</h3>
-                    <p className="text-sm text-blue-100">Always here to help you</p>
-                  </div>
-                </div>
-                <button
-                  onClick={closeSupportChat}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
-              {chatMessages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl p-4 ${
-                      message.role === 'user'
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                        : message.isError
-                        ? 'bg-red-50 border border-red-200 text-red-800'
-                        : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
-                    }`}
-                  >
-                    {message.role === 'assistant' && !message.isError && (
-                      <div className="flex items-center gap-2 mb-2">
-                        <Bot className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-semibold text-blue-600">AI Assistant</span>
-                      </div>
-                    )}
-                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
-                    <p className={`text-xs mt-2 ${
-                      message.role === 'user' ? 'text-blue-100' : 'text-gray-400'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              
-              {isChatLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                    <div className="flex items-center gap-2">
-                      <Loader className="w-4 h-4 text-blue-600 animate-spin" />
-                      <span className="text-sm text-gray-600">AI is thinking...</span>
+                  {!isMinimized && (
+                    <div>
+                      <h3 className="font-bold text-sm md:text-base lg:text-lg flex items-center gap-1 md:gap-2">
+                        AI Support
+                        <span className="text-[10px] md:text-xs bg-green-400 text-green-900 px-1.5 md:px-2 py-0.5 rounded-full font-semibold">Online</span>
+                      </h3>
+                      <p className="text-[10px] md:text-xs text-blue-100">Madad ke liye!</p>
                     </div>
-                  </div>
+                  )}
                 </div>
-              )}
-              
-              <div ref={chatEndRef} />
+                <div className="flex items-center gap-1 md:gap-2">
+                  <button
+                    onClick={toggleMinimize}
+                    className="p-1.5 md:p-2 hover:bg-white/20 rounded-lg transition-colors"
+                    aria-label={isMinimized ? "Maximize" : "Minimize"}
+                  >
+                    <Minimize2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  </button>
+                  <button
+                    onClick={closeSupportChat}
+                    className="p-1.5 md:p-2 hover:bg-white/20 rounded-lg transition-colors"
+                    aria-label="Close chat"
+                  >
+                    <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Chat Input */}
-            <div className="p-4 bg-white border-t border-gray-200">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={handleChatKeyPress}
-                  placeholder="Type your message..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  disabled={isChatLoading}
-                />
-                <button
-                  onClick={sendChatMessage}
-                  disabled={!chatInput.trim() || isChatLoading}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md hover:shadow-lg"
-                >
-                  <Send className="w-4 h-4" />
-                  Send
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Powered by Claude AI • Press Enter to send
-              </p>
-            </div>
+            {!isMinimized && (
+              <>
+                {/* Chat Messages */}
+                <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gradient-to-b from-gray-50 to-blue-50">
+                  {chatMessages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-2xl p-2.5 md:p-3 shadow-md ${
+                          message.role === 'user'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                            : 'bg-white border-2 border-blue-100 text-gray-800'
+                        }`}
+                      >
+                        {message.role === 'assistant' && (
+                          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-blue-100">
+                            <div className="w-4 h-4 md:w-5 md:h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                              <Bot className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
+                            </div>
+                            <span className="text-[10px] md:text-xs font-bold text-blue-700">AI Assistant</span>
+                          </div>
+                        )}
+                        <p className="text-xs md:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                        <p className={`text-[10px] md:text-xs mt-1.5 md:mt-2 ${
+                          message.role === 'user' ? 'text-blue-100' : 'text-gray-400'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isChatLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-white border-2 border-blue-100 rounded-2xl p-2.5 md:p-3 shadow-md">
+                        <div className="flex items-center gap-2">
+                          <Loader className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600 animate-spin" />
+                          <span className="text-xs md:text-sm text-gray-600 font-medium">Soch raha hoon...</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={chatEndRef} />
+                </div>
+
+                {/* Chat Input - Professional Design */}
+                <div className="p-3 md:p-4 bg-white border-t-2 border-blue-100 flex-shrink-0 safe-area-bottom">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={handleChatKeyPress}
+                      placeholder="Apna sawal poochein..."
+                      className="flex-1 px-3 md:px-4 py-2.5 md:py-3 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-xs md:text-sm transition-all"
+                      disabled={isChatLoading}
+                    />
+                    <button
+                      onClick={sendChatMessage}
+                      disabled={!chatInput.trim() || isChatLoading}
+                      className="px-3 md:px-4 py-2.5 md:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    >
+                      <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    </button>
+                  </div>
+                  <p className="text-[10px] md:text-xs text-gray-500 mt-2 text-center flex items-center justify-center gap-1">
+                    <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    CivicLink AI • Enter dabaayein
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
